@@ -1,7 +1,7 @@
 {
 	"name": "@kitschpatrol/tweakpane-plugin-essentials",
 	"version": "0.2.1",
-	"description": "Essential components for Tweakpane with externalized dependencies",
+	"description": "A fork of @tweakpane/plugin-essentials with build optimizations.",
 	"main": "dist/tweakpane-plugin-essentials.js",
 	"type": "module",
 	"types": "dist/types/index.d.ts",
@@ -14,6 +14,11 @@
 		"type": "git",
 		"url": "git+https://github.com/kitschpatrol/tweakpane-plugin-essentials.git"
 	},
+	"keywords": [
+		"npm-package",
+		"tweakpane",
+		"tweakpane-plugin"
+	],
 	"publishConfig": {
 		"access": "public"
 	},
