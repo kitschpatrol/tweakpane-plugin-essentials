@@ -1,6 +1,6 @@
 {
 	"name": "@kitschpatrol/tweakpane-plugin-essentials",
-	"version": "0.2.1",
+	"version": "0.2.2-beta.1",
 	"type": "module",
 	"description": "A fork of @tweakpane/plugin-essentials with build optimizations.",
 	"repository": "github:kitschpatrol/tweakpane-plugin-essentials",
