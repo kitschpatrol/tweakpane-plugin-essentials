@@ -61,7 +61,7 @@ export const IntervalInputPlugin: InputBindingPlugin<
 			? {
 					initialValue: new Interval(exValue.min, exValue.max),
 					params: result,
-			  }
+				}
 			: null;
 	},
 	binding: {

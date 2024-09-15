@@ -36,7 +36,7 @@ function createTicker(
 		: new IntervalTicker(
 				document,
 				interval ?? Constants.monitor.defaultInterval,
-		  );
+			);
 }
 
 export const FpsGraphBladePlugin: BladePlugin<FpsGraphBladeParams> =

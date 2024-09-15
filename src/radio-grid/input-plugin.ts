@@ -58,7 +58,7 @@ function createRadioGridInputPlugin<T>(config: {
 				? {
 						initialValue: value,
 						params: result,
-				  }
+					}
 				: null;
 		},
 		binding: config.binding,

@@ -79,7 +79,7 @@ export class CubicBezierController
 			config.pickerLayout === 'popup'
 				? new PopupController(doc, {
 						viewProps: this.viewProps,
-				  })
+					})
 				: null;
 
 		const pickerC = new CubicBezierPickerController(doc, {

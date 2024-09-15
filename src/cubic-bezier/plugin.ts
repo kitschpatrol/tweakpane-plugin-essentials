@@ -35,7 +35,7 @@ function createConstraint(): Constraint<CubicBezier> {
 				? new RangeConstraint({
 						min: 0,
 						max: 1,
-				  })
+					})
 				: undefined,
 		),
 	});
