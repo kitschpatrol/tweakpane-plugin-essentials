@@ -43,9 +43,10 @@ function lockAngle(
 	};
 }
 
-export class CubicBezierGraphController
-	implements ValueController<CubicBezier, CubicBezierGraphView>
-{
+export class CubicBezierGraphController implements ValueController<
+	CubicBezier,
+	CubicBezierGraphView
+> {
 	public readonly value: Value<CubicBezier>;
 	public readonly view: CubicBezierGraphView;
 	public readonly viewProps: ViewProps;

@@ -36,9 +36,10 @@ interface Config {
 	viewProps: ViewProps;
 }
 
-export class CubicBezierController
-	implements ValueController<CubicBezier, CubicBezierView>
-{
+export class CubicBezierController implements ValueController<
+	CubicBezier,
+	CubicBezierView
+> {
 	public readonly value: Value<CubicBezier>;
 	public readonly view: CubicBezierView;
 	public readonly viewProps: ViewProps;

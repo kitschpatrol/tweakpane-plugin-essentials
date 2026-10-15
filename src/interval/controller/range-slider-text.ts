@@ -23,9 +23,10 @@ interface Config {
 	viewProps: ViewProps;
 }
 
-export class RangeSliderTextController
-	implements ValueController<Interval, RangeSliderTextView>
-{
+export class RangeSliderTextController implements ValueController<
+	Interval,
+	RangeSliderTextView
+> {
 	public readonly value: Value<Interval>;
 	public readonly view: RangeSliderTextView;
 	public readonly viewProps: ViewProps;

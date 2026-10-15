@@ -22,9 +22,7 @@ interface Config {
 	viewProps: ViewProps;
 }
 
-export class CubicBezierPickerController
-	implements Controller<CubicBezierPickerView>
-{
+export class CubicBezierPickerController implements Controller<CubicBezierPickerView> {
 	public readonly value: Value<CubicBezier>;
 	public readonly view: CubicBezierPickerView;
 	public readonly viewProps: ViewProps;

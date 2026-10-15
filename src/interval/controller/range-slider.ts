@@ -21,9 +21,10 @@ interface Config {
 
 type Grabbing = 'min' | 'length' | 'max';
 
-export class RangeSliderController
-	implements ValueController<Interval, RangeSliderView>
-{
+export class RangeSliderController implements ValueController<
+	Interval,
+	RangeSliderView
+> {
 	public readonly sliderProps: SliderProps;
 	public readonly value: Value<Interval>;
 	public readonly view: RangeSliderView;
