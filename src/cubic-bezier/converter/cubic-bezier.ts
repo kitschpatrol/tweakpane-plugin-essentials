@@ -14,7 +14,7 @@ export function cubicBezierToString(bezier: CubicBezier): string {
 const COMPS_EMPTY = [0, 0.5, 0.5, 1]
 
 const CUBIC_BEZIER_PATTERN =
-	/^cubic-bezier\s*\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\)$/u
+	/^cubic-bezier\s*\(\s*(-?[0-9.]+)\s*,\s*(-?[0-9.]+)\s*,\s*(-?[0-9.]+)\s*,\s*(-?[0-9.]+)\s*\)$/u
 
 /**
  * Parses a CSS `cubic-bezier()` function. Text that is not a valid function
