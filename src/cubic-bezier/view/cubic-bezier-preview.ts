@@ -1,128 +1,117 @@
-import {
-	ClassName,
-	constrainRange,
-	mapRange,
-	SVG_NS,
-	Value,
-	View,
-	ViewProps,
-} from '@tweakpane/core';
+import type { Value, View, ViewProps } from '@tweakpane/core'
+import { ClassName, constrainRange, mapRange, SVG_NS } from '@tweakpane/core'
+import type { CubicBezier } from '../model/cubic-bezier'
+import { waitToBeAddedToDom } from './util'
 
-import {CubicBezier} from '../model/cubic-bezier.js';
-import {waitToBeAddedToDom} from './util.js';
-
-interface Config {
-	value: Value<CubicBezier>;
-	viewProps: ViewProps;
+type Config = {
+	value: Value<CubicBezier>
+	viewProps: ViewProps
 }
 
-const TICK_COUNT = 24;
-const PREVIEW_DELAY = 400;
-const PREVIEW_DURATION = 1000;
-const className = ClassName('cbzprv');
+const TICK_COUNT = 24
+const PREVIEW_DELAY = 400
+const PREVIEW_DURATION = 1000
+const className = ClassName('cbzprv')
 
 export class CubicBezierPreviewView implements View {
-	public readonly element: HTMLElement;
-	private readonly svgElem_: Element;
-	private readonly ticksElem_: Element;
-	private readonly markerElem_: HTMLElement;
-	private readonly value_: Value<CubicBezier>;
-	private stopped_ = true;
-	private startTime_ = -1;
-	private requestId_ = -1;
+	public readonly element: HTMLElement
+	private readonly markerElem_: HTMLElement
+	private requestId_ = -1
+	private startTime_ = -1
+	private stopped_ = true
+	private readonly svgElem_: Element
+	private readonly ticksElem_: Element
+	private readonly value_: Value<CubicBezier>
 
 	constructor(doc: Document, config: Config) {
-		this.onDispose_ = this.onDispose_.bind(this);
-		this.onTimer_ = this.onTimer_.bind(this);
-		this.onValueChange_ = this.onValueChange_.bind(this);
+		this.onDispose_ = this.onDispose_.bind(this)
+		this.onTimer_ = this.onTimer_.bind(this)
+		this.onValueChange_ = this.onValueChange_.bind(this)
 
-		this.element = doc.createElement('div');
-		this.element.classList.add(className());
-		config.viewProps.bindClassModifiers(this.element);
+		this.element = doc.createElement('div')
+		this.element.classList.add(className())
+		config.viewProps.bindClassModifiers(this.element)
 
-		const svgElem = doc.createElementNS(SVG_NS, 'svg');
-		svgElem.classList.add(className('g'));
-		this.element.appendChild(svgElem);
-		this.svgElem_ = svgElem;
+		const svgElement = doc.createElementNS(SVG_NS, 'svg')
+		svgElement.classList.add(className('g'))
+		this.element.append(svgElement)
+		this.svgElem_ = svgElement
 
-		const ticksElem = doc.createElementNS(SVG_NS, 'path');
-		ticksElem.classList.add(className('t'));
-		this.svgElem_.appendChild(ticksElem);
-		this.ticksElem_ = ticksElem;
+		const ticksElement = doc.createElementNS(SVG_NS, 'path')
+		ticksElement.classList.add(className('t'))
+		this.svgElem_.append(ticksElement)
+		this.ticksElem_ = ticksElement
 
-		const markerElem = doc.createElement('div');
-		markerElem.classList.add(className('m'));
-		this.element.appendChild(markerElem);
-		this.markerElem_ = markerElem;
+		const markerElement = doc.createElement('div')
+		markerElement.classList.add(className('m'))
+		this.element.append(markerElement)
+		this.markerElem_ = markerElement
 
-		this.value_ = config.value;
-		this.value_.emitter.on('change', this.onValueChange_);
+		this.value_ = config.value
+		this.value_.emitter.on('change', this.onValueChange_)
 
-		config.viewProps.handleDispose(this.onDispose_);
+		config.viewProps.handleDispose(this.onDispose_)
 		waitToBeAddedToDom(this.element, () => {
-			this.refresh();
-		});
+			this.refresh()
+		})
 	}
 
 	public play(): void {
-		this.stop();
+		this.stop()
 
-		this.updateMarker_(0);
-		this.markerElem_.classList.add(className('m', 'a'));
+		this.updateMarker_(0)
+		this.markerElem_.classList.add(className('m', 'a'))
 
-		this.startTime_ = new Date().getTime() + PREVIEW_DELAY;
-		this.stopped_ = false;
-		this.requestId_ = requestAnimationFrame(this.onTimer_);
-	}
-
-	public stop(): void {
-		cancelAnimationFrame(this.requestId_);
-		this.stopped_ = true;
-		this.markerElem_.classList.remove(className('m', 'a'));
-	}
-
-	private onDispose_(): void {
-		this.stop();
-	}
-
-	private updateMarker_(progress: number): void {
-		const p = this.value_.rawValue.y(constrainRange(progress, 0, 1));
-		this.markerElem_.style.left = `${p * 100}%`;
+		this.startTime_ = Date.now() + PREVIEW_DELAY
+		this.stopped_ = false
+		this.requestId_ = requestAnimationFrame(this.onTimer_)
 	}
 
 	public refresh(): void {
-		const {clientWidth: w, clientHeight: h} = this.svgElem_;
-		const ds: string[] = [];
-		const bezier = this.value_.rawValue;
+		const { clientWidth: w, clientHeight: h } = this.svgElem_
+		const ds: string[] = []
+		const bezier = this.value_.rawValue
 		for (let i = 0; i < TICK_COUNT; i++) {
-			const px = mapRange(i, 0, TICK_COUNT - 1, 0, 1);
-			const x = mapRange(bezier.y(px), 0, 1, 0, w);
-			ds.push(`M ${x},0 v${h}`);
+			const px = mapRange(i, 0, TICK_COUNT - 1, 0, 1)
+			const x = mapRange(bezier.y(px), 0, 1, 0, w)
+			ds.push(`M ${x},0 v${h}`)
 		}
-		this.ticksElem_.setAttributeNS(null, 'd', ds.join(' '));
+
+		this.ticksElem_.setAttributeNS(null, 'd', ds.join(' '))
+	}
+
+	public stop(): void {
+		cancelAnimationFrame(this.requestId_)
+		this.stopped_ = true
+		this.markerElem_.classList.remove(className('m', 'a'))
+	}
+
+	private onDispose_(): void {
+		this.stop()
 	}
 
 	private onTimer_(): void {
-		if (this.startTime_ === null) {
-			return;
-		}
-
-		const dt = new Date().getTime() - this.startTime_;
-		const p = dt / PREVIEW_DURATION;
-		this.updateMarker_(p);
+		const dt = Date.now() - this.startTime_
+		const p = dt / PREVIEW_DURATION
+		this.updateMarker_(p)
 
 		if (dt > PREVIEW_DURATION + PREVIEW_DELAY) {
-			this.stop();
+			this.stop()
 		}
 
 		if (!this.stopped_) {
-			this.requestId_ = requestAnimationFrame(this.onTimer_);
+			this.requestId_ = requestAnimationFrame(this.onTimer_)
 		}
 	}
 
 	private onValueChange_() {
-		this.refresh();
+		this.refresh()
 
-		this.play();
+		this.play()
+	}
+
+	private updateMarker_(progress: number): void {
+		const p = this.value_.rawValue.y(constrainRange(progress, 0, 1))
+		this.markerElem_.style.left = `${p * 100}%`
 	}
 }

@@ -1,10 +1,10 @@
-@use '../../node_modules/@tweakpane/core/lib/sass/tp';
+@use '@tweakpane/core/lib/sass/tp';
 
 .#{tp.$prefix}-btngridv {
-	border-radius: tp.cssVar('blade-border-radius');
-	display: grid;
 	overflow: hidden;
+	display: grid;
 	gap: 2px;
+	border-radius: tp.cssVar('blade-border-radius');
 
 	&.#{tp.$prefix}-v-disabled {
 		opacity: 0.5;

@@ -1,58 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Tweakpane essentials</title>
 		<style>
 			body {
 				margin: 0;
 			}
+
 			.wrapper {
-				align-items: start;
-				background-color: #f1f2f3;
-				box-sizing: border-box;
 				display: grid;
-				gap: 32px;
 				grid-template-columns: repeat(auto-fit, 256px);
+				gap: 32px;
+				align-items: start;
 				justify-content: center;
-				margin-left: auto;
-				margin-right: auto;
-				margin-top: 32px;
+				box-sizing: border-box;
 				max-width: 960px;
+				margin-top: 32px;
+				margin-right: auto;
+				margin-left: auto;
 				padding: 64px;
+				background-color: #f1f2f3;
 			}
 		</style>
-		<script type="importmap">
-			{
-				"imports": {
-					"tweakpane": "../node_modules/tweakpane/dist/tweakpane.js",
-					"@tweakpane/core": "../node_modules/@tweakpane/core/dist/index.js",
-					"tweakpane-plugin-essentials": "../dist/tweakpane-plugin-essentials.js"
-				}
-			}
-		</script>
 	</head>
 	<body>
 		<div class="wrapper"></div>
 		<script type="module">
-			import {Pane} from 'tweakpane';
-			import * as TweakpaneEssentialsPlugin from 'tweakpane-plugin-essentials';
+			import { Pane } from 'tweakpane'
+			import * as TweakpaneEssentialsPlugin from '/src/index.ts'
 
 			const params = {
-				interval: {min: 40, max: 60},
+				interval: { min: 40, max: 60 },
 				radiogrid: 25,
-			};
+			}
 			const panes = ['Input bindings', 'Blades'].map((title) => {
 				const pane = new Pane({
 					container: document.querySelector('.wrapper'),
 					title: title,
-				});
+				})
 
 				// Register plugin
-				pane.registerPlugin(TweakpaneEssentialsPlugin);
+				pane.registerPlugin(TweakpaneEssentialsPlugin)
 
-				return pane;
-			});
+				return pane
+			})
 
 			// Input bindings
 			panes[0]
@@ -62,10 +55,10 @@
 					max: 80,
 				})
 				.on('change', (ev) => {
-					console.log(ev);
-				});
+					console.log(ev)
+				})
 
-			const scales = [10, 20, 25, 50, 75, 100];
+			const scales = [10, 20, 25, 50, 75, 100]
 			panes[0]
 				.addBinding(params, 'radiogrid', {
 					view: 'radiogrid',
@@ -78,8 +71,8 @@
 					label: 'radiogrid',
 				})
 				.on('change', (ev) => {
-					console.log(ev);
-				});
+					console.log(ev)
+				})
 
 			// Blades
 			const fpsGraph = panes[1].addBlade({
@@ -87,16 +80,16 @@
 
 				label: 'fpsgraph',
 				rows: 2,
-			});
+			})
 			function render() {
-				fpsGraph.begin();
+				fpsGraph.begin()
 
 				// Rendering
 
-				fpsGraph.end();
-				requestAnimationFrame(render);
+				fpsGraph.end()
+				requestAnimationFrame(render)
 			}
-			render();
+			render()
 
 			panes[1]
 				.addBlade({
@@ -108,8 +101,8 @@
 					picker: 'inline',
 				})
 				.on('change', (ev) => {
-					console.log(ev);
-				});
+					console.log(ev)
+				})
 
 			panes[1]
 				.addBlade({
@@ -125,25 +118,25 @@
 					label: 'button\ngrid',
 				})
 				.on('click', (ev) => {
-					console.log(ev);
-				});
+					console.log(ev)
+				})
 
-			window.panes = panes;
+			window.panes = panes
 
 			if (location.search === '?readme') {
 				panes.forEach((pane) => {
 					pane.children.forEach((child) => {
-						const wrapperElem = document.createElement('div');
-						wrapperElem.classList.add('wrapper');
-						document.body.appendChild(wrapperElem);
+						const wrapperElem = document.createElement('div')
+						wrapperElem.classList.add('wrapper')
+						document.body.appendChild(wrapperElem)
 
 						const newPane = new Pane({
 							container: wrapperElem,
-						});
-						newPane.registerPlugin(TweakpaneEssentialsPlugin);
-						newPane.add(child);
-					});
-				});
+						})
+						newPane.registerPlugin(TweakpaneEssentialsPlugin)
+						newPane.add(child)
+					})
+				})
 			}
 		</script>
 	</body>

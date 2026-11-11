@@ -1,41 +1,40 @@
+import type { BaseBladeParams, BladePlugin, LabelPropsObject, MicroParser } from '@tweakpane/core'
 import {
-	BaseBladeParams,
-	BladePlugin,
 	createPlugin,
 	createValue,
 	LabeledValueBladeController,
-	LabelPropsObject,
-	MicroParser,
 	parseRecord,
 	ValueMap,
-} from '@tweakpane/core';
+} from '@tweakpane/core'
+import { RadioGridApi } from './api/radio-grid'
+import { RadioGridController } from './controller/radio-grid'
 
-import {RadioGridApi} from './api/radio-grid.js';
-import {RadioGridController} from './controller/radio-grid.js';
-
-export interface RadioGridBladeParams<T> extends BaseBladeParams {
+export type RadioGridBladeParams<T> = {
 	cells: (
 		x: number,
 		y: number,
 	) => {
-		title: string;
-		value: T;
-	};
-	groupName: string;
-	size: [number, number];
-	value: T;
-	view: 'radiogrid';
+		title: string
+		value: T
+	}
+	groupName: string
+	label?: string
+	size: [number, number]
+	value: T
+	view: 'radiogrid'
+} & BaseBladeParams
 
-	label?: string;
+function isRadioGridBladeController<T>(
+	controller: unknown,
+): controller is LabeledValueBladeController<T, RadioGridController<T>> {
+	return (
+		controller instanceof LabeledValueBladeController &&
+		controller.valueController instanceof RadioGridController
+	)
 }
 
-export const RadioGridBladePlugin = (function <T>(): BladePlugin<
-	RadioGridBladeParams<T>
-> {
+export const RadioGridBladePlugin = (function <T>(): BladePlugin<RadioGridBladeParams<T>> {
 	return createPlugin({
-		id: 'radiogrid',
-		type: 'blade',
-
 		accept(params) {
 			const result = parseRecord<RadioGridBladeParams<T>>(params, (p) => ({
 				cells: p.required.function as MicroParser<
@@ -43,45 +42,40 @@ export const RadioGridBladePlugin = (function <T>(): BladePlugin<
 						x: number,
 						y: number,
 					) => {
-						title: string;
-						value: T;
+						title: string
+						value: T
 					}
 				>,
 				groupName: p.required.string,
-				size: p.required.array(p.required.number) as MicroParser<
-					[number, number]
-				>,
+				label: p.optional.string,
+				size: p.required.array(p.required.number) as MicroParser<[number, number]>,
 				value: p.required.raw as MicroParser<T>,
 				view: p.required.constant('radiogrid'),
-
-				label: p.optional.string,
-			}));
-			return result ? {params: result} : null;
+			}))
+			return result ? { params: result } : null
+		},
+		api(args) {
+			return isRadioGridBladeController<T>(args.controller)
+				? new RadioGridApi(args.controller)
+				: null
 		},
 		controller(args) {
-			const value = createValue(args.params.value);
+			const value = createValue(args.params.value)
 			return new LabeledValueBladeController(args.document, {
 				blade: args.blade,
 				props: ValueMap.fromObject<LabelPropsObject>({
 					label: args.params.label,
 				}),
-				value: value,
+				value,
 				valueController: new RadioGridController(args.document, {
-					groupName: args.params.groupName,
 					cellConfig: args.params.cells,
+					groupName: args.params.groupName,
 					size: args.params.size,
-					value: value,
+					value,
 				}),
-			});
+			})
 		},
-		api(args) {
-			if (!(args.controller instanceof LabeledValueBladeController)) {
-				return null;
-			}
-			if (!(args.controller.valueController instanceof RadioGridController)) {
-				return null;
-			}
-			return new RadioGridApi(args.controller);
-		},
-	});
-})();
+		id: 'radiogrid',
+		type: 'blade',
+	})
+})()

@@ -1,55 +1,50 @@
-import {
-	bindValueMap,
-	ClassName,
-	ValueMap,
-	View,
-	ViewProps,
-} from '@tweakpane/core';
+import type { ValueMap, View, ViewProps } from '@tweakpane/core'
+import { bindValueMap, ClassName } from '@tweakpane/core'
 
 export type RadioPropsObject = {
-	title: string;
-};
-
-export type RadioProps = ValueMap<RadioPropsObject>;
-
-interface Config {
-	name: string;
-	props: RadioProps;
-	viewProps: ViewProps;
+	title: string
 }
 
-const className = ClassName('rad');
+export type RadioProps = ValueMap<RadioPropsObject>
+
+type Config = {
+	name: string
+	props: RadioProps
+	viewProps: ViewProps
+}
+
+const className = ClassName('rad')
 
 export class RadioView implements View {
-	public readonly element: HTMLElement;
-	public readonly inputElement: HTMLInputElement;
+	public readonly element: HTMLElement
+	public readonly inputElement: HTMLInputElement
 
 	constructor(doc: Document, config: Config) {
-		this.element = doc.createElement('div');
-		this.element.classList.add(className());
-		config.viewProps.bindClassModifiers(this.element);
+		this.element = doc.createElement('div')
+		this.element.classList.add(className())
+		config.viewProps.bindClassModifiers(this.element)
 
-		const labelElem = doc.createElement('label');
-		labelElem.classList.add(className('l'));
-		this.element.appendChild(labelElem);
+		const labelElement = doc.createElement('label')
+		labelElement.classList.add(className('l'))
+		this.element.append(labelElement)
 
-		const inputElem = doc.createElement('input');
-		inputElem.classList.add(className('i'));
-		inputElem.name = config.name;
-		inputElem.type = 'radio';
-		config.viewProps.bindDisabled(inputElem);
-		labelElem.appendChild(inputElem);
-		this.inputElement = inputElem;
+		const inputElement = doc.createElement('input')
+		inputElement.classList.add(className('i'))
+		inputElement.name = config.name
+		inputElement.type = 'radio'
+		config.viewProps.bindDisabled(inputElement)
+		labelElement.append(inputElement)
+		this.inputElement = inputElement
 
-		const bodyElem = doc.createElement('div');
-		bodyElem.classList.add(className('b'));
-		labelElem.appendChild(bodyElem);
+		const bodyElement = doc.createElement('div')
+		bodyElement.classList.add(className('b'))
+		labelElement.append(bodyElement)
 
-		const titleElem = doc.createElement('div');
-		titleElem.classList.add(className('t'));
-		bodyElem.appendChild(titleElem);
+		const titleElement = doc.createElement('div')
+		titleElement.classList.add(className('t'))
+		bodyElement.append(titleElement)
 		bindValueMap(config.props, 'title', (title) => {
-			titleElem.textContent = title;
-		});
+			titleElement.textContent = title
+		})
 	}
 }

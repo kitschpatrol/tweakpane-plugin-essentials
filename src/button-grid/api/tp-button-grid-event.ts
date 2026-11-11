@@ -1,15 +1,14 @@
-import {TpEvent} from '@tweakpane/core';
-
-import {ButtonCellApi} from './button-cell.js';
+import { TpEvent } from '@tweakpane/core'
+import type { ButtonCellApi } from './button-cell'
 
 export class TpButtonGridEvent extends TpEvent {
-	public readonly cell: ButtonCellApi;
-	public readonly index: [number, number];
+	public readonly cell: ButtonCellApi
+	public readonly index: [number, number]
 
 	constructor(target: unknown, cell: ButtonCellApi, index: [number, number]) {
-		super(target);
+		super(target)
 
-		this.cell = cell;
-		this.index = index;
+		this.cell = cell
+		this.index = index
 	}
 }

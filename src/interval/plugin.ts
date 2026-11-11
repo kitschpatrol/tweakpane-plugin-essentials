@@ -1,7 +1,6 @@
+import type { Constraint, InputBindingPlugin, NumberInputParams } from '@tweakpane/core'
 import {
-	BaseInputParams,
 	CompositeConstraint,
-	Constraint,
 	createNumberTextInputParamsParser,
 	createNumberTextPropsObject,
 	createPlugin,
@@ -9,35 +8,33 @@ import {
 	createStepConstraint,
 	DefiniteRangeConstraint,
 	findConstraint,
-	InputBindingPlugin,
-	NumberInputParams,
 	parseNumber,
 	parseRecord,
-	PointAxis,
 	PointNdTextController,
 	TpError,
 	ValueMap,
-} from '@tweakpane/core';
+} from '@tweakpane/core'
+import type { IntervalObject } from './model/interval'
+import { IntervalConstraint } from './constraint/interval'
+import { RangeSliderTextController } from './controller/range-slider-text'
+import { intervalFromUnknown, writeInterval } from './converter/interval'
+import { Interval, IntervalAssembly } from './model/interval'
 
-import {IntervalConstraint} from './constraint/interval.js';
-import {RangeSliderTextController} from './controller/range-slider-text.js';
-import {intervalFromUnknown, writeInterval} from './converter/interval.js';
-import {Interval, IntervalAssembly, IntervalObject} from './model/interval.js';
-
-interface IntervalInputParams extends NumberInputParams, BaseInputParams {}
+type IntervalInputParams = NumberInputParams
 
 function createConstraint(params: IntervalInputParams): Constraint<Interval> {
-	const constraints = [];
-	const rc = createRangeConstraint(params);
+	const constraints = []
+	const rc = createRangeConstraint(params)
 	if (rc) {
-		constraints.push(rc);
-	}
-	const sc = createStepConstraint(params);
-	if (sc) {
-		constraints.push(sc);
+		constraints.push(rc)
 	}
 
-	return new IntervalConstraint(new CompositeConstraint(constraints));
+	const sc = createStepConstraint(params)
+	if (sc) {
+		constraints.push(sc)
+	}
+
+	return new IntervalConstraint(new CompositeConstraint(constraints))
 }
 
 export const IntervalInputPlugin: InputBindingPlugin<
@@ -45,43 +42,38 @@ export const IntervalInputPlugin: InputBindingPlugin<
 	IntervalObject,
 	IntervalInputParams
 > = createPlugin({
-	id: 'input-interval',
-	type: 'input',
-
-	accept: (exValue, params) => {
+	accept(exValue, params) {
 		if (!Interval.isObject(exValue)) {
-			return null;
+			return null
 		}
 
 		const result = parseRecord<IntervalInputParams>(params, (p) => ({
 			...createNumberTextInputParamsParser(p),
 			readonly: p.optional.constant(false),
-		}));
+		}))
 		return result
 			? {
 					initialValue: new Interval(exValue.min, exValue.max),
 					params: result,
 				}
-			: null;
+			: null
 	},
 	binding: {
-		reader: (_args) => intervalFromUnknown,
 		constraint: (args) => createConstraint(args.params),
 		equals: Interval.equals,
+		reader: (_args) => intervalFromUnknown,
 		writer: (_args) => writeInterval,
 	},
 	controller(args) {
-		const v = args.value;
-		const c = args.constraint;
+		const v = args.value
+		const c = args.constraint
 		if (!(c instanceof IntervalConstraint)) {
-			throw TpError.shouldNeverHappen();
+			throw TpError.shouldNeverHappen()
 		}
 
-		const midValue = (v.rawValue.min + v.rawValue.max) / 2;
-		const textProps = ValueMap.fromObject(
-			createNumberTextPropsObject(args.params, midValue),
-		);
-		const drc = c.edge && findConstraint(c.edge, DefiniteRangeConstraint);
+		const midValue = (v.rawValue.min + v.rawValue.max) / 2
+		const textProps = ValueMap.fromObject(createNumberTextPropsObject(args.params, midValue))
+		const drc = c.edge && findConstraint(c.edge, DefiniteRangeConstraint)
 		if (drc) {
 			return new RangeSliderTextController(args.document, {
 				constraint: c.edge,
@@ -91,22 +83,24 @@ export const IntervalInputPlugin: InputBindingPlugin<
 					max: drc.values.value('max'),
 					min: drc.values.value('min'),
 				}),
-				textProps: textProps,
+				textProps,
 				value: v,
 				viewProps: args.viewProps,
-			});
+			})
 		}
 
 		const axis = {
 			constraint: c.edge,
-			textProps: textProps,
-		} as PointAxis;
+			textProps,
+		}
 		return new PointNdTextController(args.document, {
 			assembly: IntervalAssembly,
 			axes: [axis, axis],
 			parser: parseNumber,
 			value: v,
 			viewProps: args.viewProps,
-		});
+		})
 	},
-});
+	id: 'input-interval',
+	type: 'input',
+})

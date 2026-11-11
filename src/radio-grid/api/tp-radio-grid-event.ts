@@ -1,10 +1,9 @@
-import {TpChangeEvent} from '@tweakpane/core';
-
-import {RadioCellApi} from './radio-cell-api.js';
+import { TpChangeEvent } from '@tweakpane/core'
+import type { RadioCellApi } from './radio-cell-api'
 
 export class TpRadioGridChangeEvent<T> extends TpChangeEvent<T> {
-	public readonly cell: RadioCellApi;
-	public readonly index: [number, number];
+	public readonly cell: RadioCellApi
+	public readonly index: [number, number]
 
 	constructor(
 		target: unknown,
@@ -13,9 +12,9 @@ export class TpRadioGridChangeEvent<T> extends TpChangeEvent<T> {
 		value: T,
 		last?: boolean,
 	) {
-		super(target, value, last);
+		super(target, value, last)
 
-		this.cell = cell;
-		this.index = index;
+		this.cell = cell
+		this.index = index
 	}
 }

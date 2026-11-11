@@ -1,48 +1,45 @@
-import {PointNdAssembly} from '@tweakpane/core';
+import type { PointNdAssembly } from '@tweakpane/core'
 
-export interface IntervalObject {
-	max: number;
-	min: number;
+export type IntervalObject = {
+	min: number
+	max: number
 }
 
 export class Interval {
-	public max: number;
-	public min: number;
+	public max: number
+	public min: number
 
-	constructor(min: number, max: number) {
-		this.min = min;
-		this.max = max;
+	get length(): number {
+		return this.max - this.min
 	}
 
-	public static isObject(obj: unknown): obj is IntervalObject {
-		if (typeof obj !== 'object' || obj === null) {
-			return false;
-		}
-		const min = (obj as Record<string, any>).min;
-		const max = (obj as Record<string, any>).max;
-		if (typeof min !== 'number' || typeof max !== 'number') {
-			return false;
-		}
-		return true;
+	constructor(min: number, max: number) {
+		this.min = min
+		this.max = max
 	}
 
 	public static equals(v1: Interval, v2: Interval): boolean {
-		return v1.min === v2.min && v1.max === v2.max;
+		return v1.min === v2.min && v1.max === v2.max
 	}
 
-	get length(): number {
-		return this.max - this.min;
+	public static isObject(object: unknown): object is IntervalObject {
+		if (typeof object !== 'object' || object === null) {
+			return false
+		}
+
+		const { min, max } = object as Record<string, unknown>
+		return typeof min === 'number' && typeof max === 'number'
 	}
 
 	public toObject(): IntervalObject {
 		return {
 			min: this.min,
 			max: this.max,
-		};
+		}
 	}
 }
 
 export const IntervalAssembly: PointNdAssembly<Interval> = {
-	fromComponents: (comps) => new Interval(comps[0], comps[1]),
+	fromComponents: ([min = 0, max = 0]) => new Interval(min, max),
 	toComponents: (p) => [p.min, p.max],
-};
+}
