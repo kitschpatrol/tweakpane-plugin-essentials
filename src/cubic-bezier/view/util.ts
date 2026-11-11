@@ -1,27 +1,24 @@
 /**
- * Calls `callback` once an element is added to the document, so views can
- * measure their size after they are inserted.
+ * Calls `callback` once `element` is connected to its document, so views can
+ * measure their size after they are inserted. Calls it immediately if `element`
+ * is already connected.
  */
 export function waitToBeAddedToDom(element: HTMLElement, callback: () => void): void {
-	const observer = new MutationObserver((mutations) => {
-		for (const mutation of mutations) {
-			if (mutation.type !== 'childList') {
-				continue
-			}
+	if (element.isConnected) {
+		callback()
+		return
+	}
 
-			for (const node of mutation.addedNodes) {
-				if (!node.contains(node)) {
-					continue
-				}
-
-				callback()
-				observer.disconnect()
-			}
+	const observer = new MutationObserver(() => {
+		if (!element.isConnected) {
+			return
 		}
+
+		observer.disconnect()
+		callback()
 	})
 
 	observer.observe(element.ownerDocument.body, {
-		attributes: true,
 		childList: true,
 		subtree: true,
 	})
