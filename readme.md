@@ -21,30 +21,39 @@
 
 ## Overview
 
-This is a fork of the [Tweakpane essentials plugin](https://github.com/tweakpane/plugin-essentials) by [Hiroki Kokubun (cocopon)](https://cocopon.me/), providing interval inputs, grids, a frame rate graph, and a cubic Bézier editor for Tweakpane 4.
+This is a fork of [Hiroki Kokubun's](https://cocopon.me/) [@tweakpane/plugin-essentials](https://github.com/tweakpane/plugin-essentials) with externalized dependencies.
 
-See the [upstream README](https://github.com/tweakpane/plugin-essentials/blob/main/README.md) for the original documentation and examples. This fork is published primarily for [Svelte Tweakpane UI](https://kitschpatrol.com/svelte-tweakpane-ui), with minimal changes to upstream behavior.
+This allows for smaller bundled file sizes in projects using multiple Tweakpane plugins.
+
+It is published to NPM primarily for the [_Svelte Tweakpane UI_](https://kitschpatrol.com/svelte-tweakpane-ui) project, with minimal changes beyond dependency externalization and the fixes listed below.
+
+See the [upstream readme](https://github.com/tweakpane/plugin-essentials/blob/main/README.md) for details on the original plugin and its usage.
 
 ## Fork changes
 
 - Publishes as `@kitschpatrol/tweakpane-plugin-essentials` instead of `@tweakpane/plugin-essentials`.
-- Bundles `@tweakpane/core` at the package root like a standard Tweakpane plugin, and adds a `/lite` entry that imports core instead so bundlers can share one copy across plugins.
-- Exports public parameter types from the package root and `/lite`.
-- Builds TypeScript and inline SCSS with tsdown, with a Vite playground, Vitest tests, ksc linting, and chagent release notes.
-- Incorporates the [CubicBezier performance fix](https://github.com/tweakpane/plugin-essentials/pull/21).
+- Adds a `/lite` export that imports `@tweakpane/core` instead of bundling it so projects can share one copy of `core` across multiple plugins.
+- Exports public parameter types.
+- Migrates the repository structure to align with the Tweakpane plugin template provided by [@kitschpatrol/create-project](https://github.com/kitschpatrol/create-project), which includes:
+  - [pnpm](https://pnpm.io/) instead of npm for local development
+  - [tsdown](https://tsdown.dev/) for bundling, type generation, and SCSS processing
+  - [vite](https://vite.dev/) for live-reloading the demo project
+  - [vitest](https://vitest.dev/) for automated tests
+  - [ksc](https://github.com/kitschpatrol/shared-config) for linting and shared configuration
+  - [chagent](https://github.com/kitschpatrol/chagent) for release notes
+- Incorporates a [CubicBezier performance fix](https://github.com/tweakpane/plugin-essentials/pull/21).
 
 ## Getting started
 
-<!-- dependencies({ headingLevel: 3 }) -->
-
 ### Dependencies
 
-- [Node.js](https://nodejs.org/) 18.0.0 or newer
-- [tweakpane](https://www.npmjs.com/package/tweakpane) `^4.0.0` _(peer dependency)_
+The plugin requires [Tweakpane 4](https://www.npmjs.com/package/tweakpane).
 
-<!-- /dependencies -->
+If you're using the `/lite` export path of the plugin without a bundler, you'll need to provide the [@tweakpane/core](https://www.npmjs.com/package/@tweakpane/core) library as well.
 
-<!-- install({ headingLevel: 3 }) -->
+If you're using Svelte 4 or 5 as a front-end library, take a look at [Svelte Tweakpane UI](https://kitschpatrol.com/svelte-tweakpane-ui), which wraps Tweakpane in a set of Svelte-friendly components, including the [`<ButtonGrid>`](https://kitschpatrol.com/svelte-tweakpane-ui/docs/components/buttongrid), [`<CubicBezier>`](https://kitschpatrol.com/svelte-tweakpane-ui/docs/components/cubicbezier), [`<IntervalSlider>`](https://kitschpatrol.com/svelte-tweakpane-ui/docs/components/intervalslider), [`<RadioGrid>`](https://kitschpatrol.com/svelte-tweakpane-ui/docs/components/radiogrid), and [`<FpsGraph>`](https://kitschpatrol.com/svelte-tweakpane-ui/docs/components/fpsgraph) controls from this plugin.
+
+<!-- installation -->
 
 ### Installation
 
@@ -54,16 +63,16 @@ Add it to your project:
 npm install @kitschpatrol/tweakpane-plugin-essentials
 ```
 
-<!-- /install -->
+<!-- /installation -->
 
 ## Usage
 
 ```ts
-import * as EssentialsPlugin from '@kitschpatrol/tweakpane-plugin-essentials'
+import * as TweakpanePluginEssentials from '@kitschpatrol/tweakpane-plugin-essentials'
 import { Pane } from 'tweakpane'
 
 const pane = new Pane()
-pane.registerPlugin(EssentialsPlugin)
+pane.registerPlugin(TweakpanePluginEssentials)
 
 const parameters = { range: { min: 20, max: 80 } }
 pane.addBinding(parameters, 'range', { min: 0, max: 100 })
@@ -71,62 +80,21 @@ pane.addBinding(parameters, 'range', { min: 0, max: 100 })
 
 See the [upstream usage examples](https://github.com/tweakpane/plugin-essentials/blob/main/README.md#usage) for the other controls and their options.
 
-To share core in a bundled application, change the plugin import to `@kitschpatrol/tweakpane-plugin-essentials/lite`. Existing consumers that relied on external core at the package root should use this entry.
+To share core through your bundler, import `@kitschpatrol/tweakpane-plugin-essentials/lite` instead.
 
-## Distribution
+## Implementation notes
 
-The build writes four ES module files directly under `dist/`:
+The [Rollup](https://rollupjs.org) configuration provided in the [Tweakpane plugin template](https://github.com/tweakpane/plugin-template) does not externalize [`@tweakpane/core`](https://github.com/cocopon/tweakpane/tree/main/packages/core) as a production dependency.
 
-| File                                      | Core     | Minified |
-| ----------------------------------------- | -------- | -------- |
-| `tweakpane-plugin-essentials.js`          | Bundled  | No       |
-| `tweakpane-plugin-essentials.min.js`      | Bundled  | Yes      |
-| `tweakpane-plugin-essentials.lite.js`     | External | No       |
-| `tweakpane-plugin-essentials.lite.min.js` | External | Yes      |
+Instead, it gets built into the single-file plugin artifact, which is what's published to NPM and imported by plugin consumers. This makes it easy to import as an ES module from a URL, but means that larger projects importing multiple Tweakpane plugins end up with duplicate copies of the `@tweakpane/core` code, adding about \~100 Kb to the final minified build for each plugin after the first.
 
-The package root resolves to `.js` and bundles `@tweakpane/core`. The `/lite` entry resolves to `.lite.js` and imports core, so an application bundler can share one copy across plugins. Direct URL imports of a lite file need an import map for core. Tweakpane itself is a peer dependency and is never bundled. Use one entry consistently when relying on the identity of exported classes.
+Externalizing this dependency allows build tools like [vite](https://vite.dev) to share a single instance of the `@tweakpane/core` code across multiple plugins.
 
-Both entries share the `dist/tweakpane-plugin-essentials.d.ts` declarations, so import public types from the package root or `/lite`. The export map contains only the package root, `/lite`, and `/package.json`. JavaScript targets ES2022, and no source maps are emitted.
-
-<!-- size-table({ files: ["dist/tweakpane-plugin-essentials.js", "dist/tweakpane-plugin-essentials.min.js", "dist/tweakpane-plugin-essentials.lite.js", "dist/tweakpane-plugin-essentials.lite.min.js"], precision: 1 }) -->
-
-| File                                    | Original | Gzip    | Brotli  |
-| --------------------------------------- | -------- | ------- | ------- |
-| tweakpane-plugin-essentials.js          | 122.8 kB | 25.5 kB | 21.7 kB |
-| tweakpane-plugin-essentials.min.js      | 69.2 kB  | 17.1 kB | 15.2 kB |
-| tweakpane-plugin-essentials.lite.js     | 56.5 kB  | 12.9 kB | 11 kB   |
-| tweakpane-plugin-essentials.lite.min.js | 36.7 kB  | 9.8 kB  | 8.8 kB  |
-
-<!-- /size-table -->
-
-## Development
-
-<!-- development-dependencies({ headingLevel: 3 }) -->
-
-### Development dependencies
-
-- [Node.js](https://nodejs.org/) ^24.16.0 || >=26.3.0
-- [pnpm](https://pnpm.io/) 12.16.1
-
-<!-- /development-dependencies -->
-
-| Command        | Purpose                                                                 |
-| -------------- | ----------------------------------------------------------------------- |
-| `pnpm install` | Install development dependencies.                                       |
-| `pnpm build`   | Build the four distributions and the declaration bundle with tsdown.    |
-| `pnpm dev`     | Open the Vite playground in `demo/index.html`.                          |
-| `pnpm watch`   | Rebuild JavaScript, declarations, and imported Sass partials on change. |
-| `pnpm test`    | Run the Vitest suite in `test/`.                                        |
-| `pnpm fix`     | Apply ksc formatting and lint fixes.                                    |
-| `pnpm lint`    | Check code, types, styles, dependencies, and generated documentation.   |
-
-Styles live in `src/styles/` and compile to a CSS string through an `?inline` import, which Tweakpane installs when the plugin is registered. Build before running `pnpm fix` or `pnpm lint`, since mdat reads `dist/` for the size table.
-
-The release script calls chagent to update the changelog while preparing the version bump, then builds and publishes the package.
+If you're not using a bundler, direct ESM imports from URLs can still work by defining the `@tweakpane/core` dependency in an [importmap](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap).
 
 ## Versioning
 
-In addition to the optional external-core entry, this fork also includes dependency updates. In an effort to stay in sync with future upstream versions, release version numbers are tagged with a "fork" suffix and an incrementing number.
+In addition to the dependency externalization change, this fork also includes dependency updates. In an effort to stay in sync with future upstream versions, release version numbers are tagged with a "fork" suffix and an incrementing number.
 
 <!-- contributing -->
 
@@ -140,12 +108,8 @@ This repository uses [@kitschpatrol/shared-config](https://github.com/kitschpatr
 
 <!-- /contributing -->
 
-<!-- license -->
-
 ## License
 
-[MIT](license.txt) © cocopon
+Original plugin: [MIT](license.txt) © Hiroki Kokubun
 
-<!-- /license -->
-
-Fork modifications: [MIT](license.txt) © [Eric Mika](https://ericmika.com).
+Fork modifications: [MIT](license.txt) © [Eric Mika](https://ericmika.com)

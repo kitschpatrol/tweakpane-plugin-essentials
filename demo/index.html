@@ -29,7 +29,7 @@
 		<div class="wrapper"></div>
 		<script type="module">
 			import { Pane } from 'tweakpane'
-			import * as TweakpaneEssentialsPlugin from '/src/index.ts'
+			import * as TweakpanePluginEssentials from '/src/index.ts'
 
 			const params = {
 				interval: { min: 40, max: 60 },
@@ -42,7 +42,7 @@
 				})
 
 				// Register plugin
-				pane.registerPlugin(TweakpaneEssentialsPlugin)
+				pane.registerPlugin(TweakpanePluginEssentials)
 
 				return pane
 			})
@@ -133,7 +133,7 @@
 						const newPane = new Pane({
 							container: wrapperElem,
 						})
-						newPane.registerPlugin(TweakpaneEssentialsPlugin)
+						newPane.registerPlugin(TweakpanePluginEssentials)
 						newPane.add(child)
 					})
 				})
