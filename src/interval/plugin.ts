@@ -20,7 +20,7 @@ import { RangeSliderTextController } from './controller/range-slider-text'
 import { intervalFromUnknown, writeInterval } from './converter/interval'
 import { Interval, IntervalAssembly } from './model/interval'
 
-type IntervalInputParams = NumberInputParams
+export type IntervalInputParams = NumberInputParams
 
 function createConstraint(params: IntervalInputParams): Constraint<Interval> {
 	const constraints = []

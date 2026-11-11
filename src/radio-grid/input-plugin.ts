@@ -9,7 +9,7 @@ import {
 } from '@tweakpane/core'
 import { RadioGridController } from './controller/radio-grid'
 
-type RadioGridInputParams<T> = {
+export type RadioGridInputParams<T> = {
 	cells: (
 		x: number,
 		y: number,
