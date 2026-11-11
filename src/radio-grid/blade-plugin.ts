@@ -72,6 +72,7 @@ export const RadioGridBladePlugin = (function <T>(): BladePlugin<RadioGridBladeP
 					groupName: args.params.groupName,
 					size: args.params.size,
 					value,
+					viewProps: args.viewProps,
 				}),
 			})
 		},

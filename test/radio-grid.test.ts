@@ -29,6 +29,7 @@ describe('radio grid blade plugin', () => {
 
 	afterEach(() => {
 		pane?.dispose()
+		pane = undefined
 	})
 
 	function setup() {
@@ -53,7 +54,7 @@ describe('radio grid blade plugin', () => {
 				value: event.value,
 			})
 		})
-		return { api, changes, inputs }
+		return { api, changes, inputs, pane }
 	}
 
 	it('accepts only valid radio grid params', () => {
@@ -117,6 +118,31 @@ describe('radio grid blade plugin', () => {
 		expect(inputs[0]?.disabled).toBe(false)
 	})
 
+	it('disables every cell with the blade, the pane, or the disabled param', () => {
+		const { api, inputs, pane: currentPane } = setup()
+		api.disabled = true
+		expect(inputs.every((input) => input.disabled)).toBe(true)
+		api.disabled = false
+		expect(inputs.some((input) => input.disabled)).toBe(false)
+
+		currentPane.disabled = true
+		expect(inputs.every((input) => input.disabled)).toBe(true)
+		currentPane.disabled = false
+		expect(inputs.some((input) => input.disabled)).toBe(false)
+
+		const disabledApi = currentPane.addBlade({
+			cells: (x: number) => ({ title: String(x), value: x }),
+			disabled: true,
+			groupName: 'disabled-group',
+			size: [2, 1],
+			value: 0,
+			view: 'radiogrid',
+		})
+		const disabledInputs = [...disabledApi.element.querySelectorAll('input')]
+		expect(disabledInputs).toHaveLength(2)
+		expect(disabledInputs.every((input) => input.disabled)).toBe(true)
+	})
+
 	it('removes its inputs when disposed', () => {
 		const { api, inputs } = setup()
 		api.dispose()
@@ -130,6 +156,7 @@ describe('radio grid input plugins', () => {
 
 	afterEach(() => {
 		pane?.dispose()
+		pane = undefined
 	})
 
 	function setup(values: Primitive[]) {
@@ -147,8 +174,31 @@ describe('radio grid input plugins', () => {
 		binding.on('change', (event) => {
 			changes.push({ last: event.last, value: event.value })
 		})
-		return { binding, changes, inputs, params }
+		return { binding, changes, inputs, pane, params }
 	}
+
+	it('disables every cell with the binding, the pane, or the disabled param', () => {
+		const { binding, inputs, pane: currentPane } = setup([1, 2, 3])
+		binding.disabled = true
+		expect(inputs.every((input) => input.disabled)).toBe(true)
+		binding.disabled = false
+		expect(inputs.some((input) => input.disabled)).toBe(false)
+
+		currentPane.disabled = true
+		expect(inputs.every((input) => input.disabled)).toBe(true)
+		currentPane.disabled = false
+
+		const disabledBinding = currentPane.addBinding({ choice: 'a' }, 'choice', {
+			cells: (x: number) => ({ title: String(x), value: x === 0 ? 'a' : 'b' }),
+			disabled: true,
+			groupName: 'disabled-input-group',
+			size: [2, 1],
+			view: 'radiogrid',
+		})
+		const disabledInputs = [...disabledBinding.element.querySelectorAll('input')]
+		expect(disabledInputs).toHaveLength(2)
+		expect(disabledInputs.every((input) => input.disabled)).toBe(true)
+	})
 
 	it('accepts only values of their own type', () => {
 		const params = {

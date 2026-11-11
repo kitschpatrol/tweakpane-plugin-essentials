@@ -35,6 +35,7 @@ export const ButtonGridBladePlugin: BladePlugin<ButtonGridBladeParams> = createP
 			valueController: new ButtonGridController(args.document, {
 				cellConfig: args.params.cells,
 				size: args.params.size,
+				viewProps: args.viewProps,
 			}),
 		})
 	},

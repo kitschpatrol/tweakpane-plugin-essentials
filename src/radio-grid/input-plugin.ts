@@ -60,6 +60,7 @@ function createRadioGridInputPlugin<T>(config: {
 				groupName: args.params.groupName,
 				size: args.params.size,
 				value: args.value,
+				viewProps: args.viewProps,
 			})
 		},
 		id: 'input-radiogrid',

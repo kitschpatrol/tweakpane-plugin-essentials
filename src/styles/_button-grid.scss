@@ -8,6 +8,11 @@
 
 	&.#{tp.$prefix}-v-disabled {
 		opacity: 0.5;
+
+		// Cells inherit the grid's disabled state, so don't dim their titles a second time
+		& .#{tp.$prefix}-btnv_b:disabled .#{tp.$prefix}-btnv_t {
+			opacity: 1;
+		}
 	}
 
 	& .#{tp.$prefix}-btnv_b:disabled {

@@ -9,6 +9,7 @@ describe('button grid blade plugin', () => {
 
 	afterEach(() => {
 		pane?.dispose()
+		pane = undefined
 	})
 
 	function setup() {
@@ -21,7 +22,7 @@ describe('button grid blade plugin', () => {
 			view: 'buttongrid',
 		}) as ButtonGridApi
 		const buttons = [...api.element.querySelectorAll('button')]
-		return { api, buttons }
+		return { api, buttons, pane }
 	}
 
 	it('accepts only valid button grid params', () => {
@@ -99,6 +100,29 @@ describe('button grid blade plugin', () => {
 		expect(buttons[1]?.disabled).toBe(false)
 		cell.disabled = false
 		expect(buttons[0]?.disabled).toBe(false)
+	})
+
+	it('disables every cell with the blade, the pane, or the disabled param', () => {
+		const { api, buttons, pane: currentPane } = setup()
+		api.disabled = true
+		expect(buttons.every((button) => button.disabled)).toBe(true)
+		api.disabled = false
+		expect(buttons.some((button) => button.disabled)).toBe(false)
+
+		currentPane.disabled = true
+		expect(buttons.every((button) => button.disabled)).toBe(true)
+		currentPane.disabled = false
+		expect(buttons.some((button) => button.disabled)).toBe(false)
+
+		const disabledApi = currentPane.addBlade({
+			cells: () => ({ title: 'A' }),
+			disabled: true,
+			size: [2, 1],
+			view: 'buttongrid',
+		})
+		const disabledButtons = [...disabledApi.element.querySelectorAll('button')]
+		expect(disabledButtons).toHaveLength(2)
+		expect(disabledButtons.every((button) => button.disabled)).toBe(true)
 	})
 
 	it('removes the grid when the blade is disposed', () => {

@@ -13,6 +13,8 @@ type Config<T> = {
 	groupName: string
 	size: [number, number]
 	value: Value<T>
+	// The blade or binding's view props, so the cells follow its disabled state
+	viewProps?: ViewProps
 }
 
 export class RadioGridController<T> implements ValueController<T, PlainView> {
@@ -30,6 +32,7 @@ export class RadioGridController<T> implements ValueController<T, PlainView> {
 	constructor(doc: Document, config: Config<T>) {
 		this.size = config.size
 		this.value = config.value
+		this.viewProps = config.viewProps ?? ViewProps.create()
 
 		const [w, h] = this.size
 		for (let y = 0; y < h; y++) {
@@ -40,7 +43,7 @@ export class RadioGridController<T> implements ValueController<T, PlainView> {
 					props: ValueMap.fromObject<RadioPropsObject>({
 						...cellConfig,
 					}),
-					viewProps: ViewProps.create(),
+					viewProps: ViewProps.create({ parent: this.viewProps }),
 				})
 				bc.view.inputElement.addEventListener('change', () => {
 					this.value.rawValue = cellConfig.value
@@ -59,7 +62,6 @@ export class RadioGridController<T> implements ValueController<T, PlainView> {
 			cc.view.inputElement.checked = true
 		})
 
-		this.viewProps = ViewProps.create()
 		this.view = new PlainView(doc, {
 			viewName: 'radgrid',
 			viewProps: this.viewProps,

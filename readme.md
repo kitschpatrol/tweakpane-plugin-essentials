@@ -92,10 +92,10 @@ Both entries share the `dist/tweakpane-plugin-essentials.d.ts` declarations, so 
 
 | File                                    | Original | Gzip    | Brotli  |
 | --------------------------------------- | -------- | ------- | ------- |
-| tweakpane-plugin-essentials.js          | 122.6 kB | 25.5 kB | 21.7 kB |
-| tweakpane-plugin-essentials.min.js      | 69 kB    | 17.1 kB | 15.3 kB |
-| tweakpane-plugin-essentials.lite.js     | 56.3 kB  | 12.9 kB | 11 kB   |
-| tweakpane-plugin-essentials.lite.min.js | 36.6 kB  | 9.8 kB  | 8.8 kB  |
+| tweakpane-plugin-essentials.js          | 122.8 kB | 25.5 kB | 21.7 kB |
+| tweakpane-plugin-essentials.min.js      | 69.2 kB  | 17.1 kB | 15.2 kB |
+| tweakpane-plugin-essentials.lite.js     | 56.5 kB  | 12.9 kB | 11 kB   |
+| tweakpane-plugin-essentials.lite.min.js | 36.7 kB  | 9.8 kB  | 8.8 kB  |
 
 <!-- /size-table -->
 

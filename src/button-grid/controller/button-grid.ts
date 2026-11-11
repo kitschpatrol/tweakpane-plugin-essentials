@@ -8,6 +8,8 @@ type CellConfig = {
 type Config = {
 	cellConfig: (x: number, y: number) => CellConfig
 	size: [number, number]
+	// The blade's view props, so the cells follow its disabled state
+	viewProps?: ViewProps
 }
 export type ButtonGridControllerConfig = Config
 
@@ -23,6 +25,7 @@ export class ButtonGridController implements Controller<PlainView> {
 
 	constructor(doc: Document, config: Config) {
 		this.size = config.size
+		this.viewProps = config.viewProps ?? ViewProps.create()
 
 		const [w, h] = this.size
 		const bcs = []
@@ -32,7 +35,7 @@ export class ButtonGridController implements Controller<PlainView> {
 					props: ValueMap.fromObject<ButtonPropsObject>({
 						...config.cellConfig(x, y),
 					}),
-					viewProps: ViewProps.create(),
+					viewProps: ViewProps.create({ parent: this.viewProps }),
 				})
 				bcs.push(bc)
 			}
@@ -40,7 +43,6 @@ export class ButtonGridController implements Controller<PlainView> {
 
 		this.cellCs_ = bcs
 
-		this.viewProps = ViewProps.create()
 		this.viewProps.handleDispose(() => {
 			for (const c of this.cellCs_) {
 				c.viewProps.set('disposed', true)
