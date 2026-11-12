@@ -5,13 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.2-fork.2] - 2026-11-11
+
+### Added
+
+- Export public blade and input parameter types, plus `TpButtonGridEvent`, from the package root and `/lite`.
+
+### Changed
+
+- **Breaking:** Bundle `@tweakpane/core` in the default distributions and add `/lite` distributions, including a minified build, for consumers that need external core.
+- **Breaking:** Restrict package exports to the root, `/lite`, and `/package.json`, and consolidate declarations into `dist/tweakpane-plugin-essentials.d.ts`.
+- **Breaking:** Raise the browser JavaScript build target from ES2015 to ES2022.
+- **Breaking:** Narrow the declared Node.js engine range to versions 18, 20, 22, 24, and 26 or newer.
+
+### Fixed
+
+- Propagate disabled blade, binding, and pane states to button-grid and radio-grid cells without dimming their titles twice.
+- Preserve negative control-point values when parsing and round-tripping CSS `cubic-bezier()` strings.
+- Wait for cubic Bézier views themselves to enter the DOM before their initial drawing, and handle views that are already connected.
+- Return `NaN` instead of `undefined` from `CubicBezier.y(NaN)`.
+- Default missing interval components to zero in `IntervalAssembly.fromComponents()`.
+- Use the same radio-grid cell configuration for rendering and selection instead of invoking the cell callback twice.
+
+### Documentation
+
+- Add installation and registration examples, clarify `/lite` dependency sharing, and expand fork and contributor guidance.
 
 ### Maintenance
 
 - Update the declared package manager to pnpm 12.16.1.
 - Update the pinned GitHub release and release-note actions.
 - Change the release script to publish using an npm one-time password retrieved from 1Password.
+- Replace Rollup and prepack/ZIP scripts with tsdown builds that inline SCSS, bundle declarations, and validate package exports and type resolution.
+- Adopt shared `ksc` linting, formatting, type checks, and editor tasks, and refresh development dependencies and pnpm to 12.18.0.
+- Replace the Mocha interval tests with Vitest and add coverage for plugin registration, styles, control APIs, interactions, disabled states, and disposal.
+- Move the browser demo to a Vite playground with source imports and live reloading.
+- Add Linux, macOS, and Windows CI for builds, linting, and tests.
+- Add monthly dependency-update pull requests and refresh the metadata-sync and Fork Tender actions.
+- Integrate `chagent` release-note generation into versioning and move the release build after the version bump.
 
 ## [0.2.2-fork.1] - 2026-10-15
 
@@ -235,7 +266,6 @@ No notable changes.
 
 - Establish TypeScript/Rollup builds, Sass compilation, linting and formatting, interval model tests, a browser test page, and release asset packaging.
 
-[Unreleased]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.2.2-fork.1...HEAD
 [0.1.0]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/releases/tag/0.1.0
 [0.1.1]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.1.0...0.1.1
 [0.1.2]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.1.1...0.1.2
@@ -254,3 +284,4 @@ No notable changes.
 [0.2.2-beta.2]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.2.2-beta.1...0.2.2-beta.2
 [0.2.2-beta.3]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.2.2-beta.2...0.2.2-beta.3
 [0.2.2-fork.1]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.2.2-beta.3...0.2.2-fork.1
+[0.2.2-fork.2]: https://github.com/kitschpatrol/tweakpane-plugin-essentials/compare/0.2.2-fork.1...0.2.2-fork.2
